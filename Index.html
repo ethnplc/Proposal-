@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Question</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #fff7fa;
+            --primary: #d86f91;
+            --primary-dark: #b95475;
+            --text: #49343c;
+            --muted: #8b6c77;
+            --white: #ffffff;
+            --shadow: 0 20px 60px rgba(145, 75, 100, 0.15);
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(255, 205, 220, 0.55), transparent 28%),
+                radial-gradient(circle at 85% 80%, rgba(242, 190, 210, 0.45), transparent 30%),
+                var(--background);
+            color: var(--text);
+            font-family: Georgia, "Times New Roman", serif;
+        }
+
+        /* Decorative background shapes */
+        .background-decoration {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(216, 111, 145, 0.2);
+            transform: rotate(45deg);
+            animation: float 7s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            top: 15%;
+            left: 12%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            top: 70%;
+            left: 8%;
+            width: 12px;
+            height: 12px;
+            animation-delay: 1.5s;
+        }
+
+        .shape:nth-child(3) {
+            top: 20%;
+            right: 12%;
+            width: 13px;
+            height: 13px;
+            animation-delay: 3s;
+        }
+
+        .shape:nth-child(4) {
+            bottom: 13%;
+            right: 10%;
+            animation-delay: 4.5s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(45deg);
+            }
+
+            50% {
+                transform: translateY(-18px) rotate(65deg);
+            }
+        }
+
+        .proposal {
+            position: relative;
+            z-index: 1;
+            width: min(90%, 620px);
+            padding: 55px 45px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(216, 111, 145, 0.15);
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+            animation: appear 0.9s ease-out both;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(25px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .small-text {
+            margin: 0 0 15px;
+            color: var(--primary);
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--text);
+            font-size: clamp(2.4rem, 8vw, 4.2rem);
+            line-height: 1.05;
+            font-weight: 500;
+        }
+
+        .message {
+            max-width: 450px;
+            margin: 25px auto 35px;
+            color: var(--muted);
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            line-height: 1.7;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            min-height: 58px;
+        }
+
+        button {
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 50px;
+            padding: 14px 28px;
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                background 0.25s ease;
+        }
+
+        #yesButton {
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: 0 10px 25px rgba(185, 84, 117, 0.25);
+        }
+
+        #yesButton:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(185, 84, 117, 0.32);
+        }
+
+        #noButton {
+            color: var(--primary-dark);
+            background: #fff;
+            border: 1px solid rgba(216, 111, 145, 0.25);
+        }
+
+        #noButton:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Once the No button starts moving, it becomes independently positioned. */
+        #noButton.moving {
+            position: fixed;
+            z-index: 10;
+            transition:
+                left 0.35s ease,
+                top 0.35s ease,
+                transform 0.25s ease;
+        }
+
+        .final-message {
+            margin-top: 18px;
+            color: var(--primary-dark);
+            font-size: 1rem;
+            animation: appear 0.5s ease-out both;
+        }
+
+        @media (max-width: 600px) {
+            .proposal {
+                width: 90%;
+                padding: 42px 25px;
+                border-radius: 24px;
+            }
+
+            .buttons {
+                gap: 10px;
+            }
+
+            button {
+                padding: 13px 22px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background-decoration" aria-hidden="true">
+        <span class="shape"></span>
+        <span class="shape"></span>
+        <span class="shape"></span>
+        <span class="shape"></span>
+    </div>
+
+    <main class="proposal">
+        <p class="small-text">A little question</p>
+
+        <h1>Will you be my partner?</h1>
+
+        <p class="message">
+            I've been wanting to ask you this for a while...
+            and I finally decided that I should just be honest about how I feel.
+        </p>
+
+        <div class="buttons">
+            <button id="yesButton" type="button">
+                Yes
+            </button>
+
+            <button id="noButton" type="button">
+                No
+            </button>
+        </div>
+
+        <p id="finalMessage" class="final-message" hidden></p>
+    </main>
+
+    <script>
+        const yesButton = document.getElementById("yesButton");
+        const noButton = document.getElementById("noButton");
+        const finalMessage = document.getElementById("finalMessage");
+
+        let noAttempts = 0;
+
+        /*
+         * The No button changes its text after every attempt.
+         * The final entry is used before the button disappears.
+         */
+        const noMessages = [
+            "No (T⁠ωT⁠)",
+            "Are you sure? (⁠•⁠ ▽⁠ •⁠;⁠)",
+            "Really? (T⁠ωT⁠)",
+            "Think about it… (⁠￣⁠ヘ⁠￣⁠;⁠)",
+            "Please? (⁠•⁠ ▽⁠ •⁠;⁠)",
+            "One more chance? (⁠ ╹⁠▽⁠╹⁠ )"
+        ];
+
+        /*
+         * Clicking Yes takes the user to the second page.
+         */
+        yesButton.addEventListener("click", () => {
+            window.location.href = "letter.html";
+        });
+
+        /*
+         * Generates a safe random position for the No button.
+         * A margin is kept around the viewport so the button
+         * never moves partially off-screen.
+         */
+        function moveNoButton() {
+            const margin = 20;
+
+            const buttonWidth = noButton.offsetWidth;
+            const buttonHeight = noButton.offsetHeight;
+
+            const maxX = Math.max(
+                margin,
+                window.innerWidth - buttonWidth - margin
+            );
+
+            const maxY = Math.max(
+                margin,
+                window.innerHeight - buttonHeight - margin
+            );
+
+            const randomX =
+                Math.floor(Math.random() * (maxX - margin + 1)) + margin;
+
+            const randomY =
+                Math.floor(Math.random() * (maxY - margin + 1)) + margin;
+
+            noButton.style.left = `${randomX}px`;
+            noButton.style.top = `${randomY}px`;
+        }
+
+        /*
+         * Every No attempt moves the button and changes its message.
+         * After seven attempts, the button disappears.
+         */
+        function handleNoAttempt() {
+            noAttempts++;
+
+            if (noAttempts >= 7) {
+                noButton.remove();
+
+                finalMessage.hidden = false;
+                finalMessage.textContent =
+                    "Looks like you only have one choice now… (⁠ ╹⁠▽⁠╹⁠ )";
+
+                return;
+            }
+
+            noButton.textContent = noMessages[noAttempts - 1];
+
+            if (!noButton.classList.contains("moving")) {
+                noButton.classList.add("moving");
+            }
+
+            moveNoButton();
+        }
+
+        /*
+         * Pointerdown works well for both mouse and touch devices.
+         */
+        noButton.addEventListener("pointerdown", (event) => {
+            event.preventDefault();
+            handleNoAttempt();
+        });
+
+        /*
+         * Keep the button inside the viewport if the screen is resized.
+         */
+        window.addEventListener("resize", () => {
+            if (noButton.isConnected && noButton.classList.contains("moving")) {
+                moveNoButton();
+            }
+        });
+    </script>
+
+</body>
+</html>
